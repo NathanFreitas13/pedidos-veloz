@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-deployment
+  namespace: loja-veloz
+  labels:
+    app: orders
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: orders
+  template:
+    metadata:
+      labels:
+        app: orders
+    spec:
+      containers:
+      - name: orders-api
+        image: seu-usuario-docker/pedidos-veloz-orders-service:latest
+        ports:
+        - containerPort: 3000
+        envFrom:
+        - configMapRef:
+            name: pedidos-config
+        - secretRef:
+            name: pedidos-secret
+        livenessProbe:
+          httpGet:
+            path: /api/orders/health
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /api/orders/ready
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 10
