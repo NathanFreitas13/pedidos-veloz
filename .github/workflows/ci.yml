@@ -1,0 +1,27 @@
+name: CI - Pedidos Veloz
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Instalar Dependências (Orders)
+      working-directory: ./services/orders
+      run: npm ci
+
+    - name: Executar Testes (Orders)
+      working-directory: ./services/orders
+      run: npm run test

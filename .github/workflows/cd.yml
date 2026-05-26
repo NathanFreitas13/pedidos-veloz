@@ -1,0 +1,32 @@
+name: CD - Pedidos Veloz
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v3
+
+    - name: Login no Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USER }}
+        password: ${{ secrets.DOCKER_PASS }}
+
+    - name: Build e Push (Orders Service)
+      uses: docker/build-push-action@v4
+      with:
+        context: ./services/orders
+        push: true
+        tags: ${{ secrets.DOCKER_USER }}/pedidos-veloz-orders-service:latest
+
+    - name: Build e Push (API Gateway)
+      uses: docker/build-push-action@v4
+      with:
+        context: ./services/api-gateway
+        push: true
+        tags: ${{ secrets.DOCKER_USER }}/pedidos-veloz-api-gateway:latest
