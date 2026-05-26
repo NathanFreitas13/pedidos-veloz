@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  db-postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: secretpassword
+      POSTGRES_DB: pedidos_veloz
+    ports:
+      - "5432:5432"
+    networks:
+      - veloz-network
+
+  orders-service:
+    build: ./services/orders
+    ports:
+      - "3001:3000"
+    depends_on:
+      - db-postgres
+    networks:
+      - veloz-network
+
+networks:
+  veloz-network:
+    driver: bridge
